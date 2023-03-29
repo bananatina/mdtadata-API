@@ -9,12 +9,13 @@ const cors = require('cors');
 app.use(cors({
   origin: 'https://fromzerotoone.net'
 }));
+
 app.post('/upload', upload.single('file'), (req, res) => {
   const { path } = req.file;
   exec(`exiftool -j ${path}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
-      res.sendStatus(500);
+      res.status(500).json({ error: 'Failed to extract metadata' });
       return;
     }
     const metadata = JSON.parse(stdout)[0];
